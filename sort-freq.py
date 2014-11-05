@@ -6,6 +6,7 @@ signature_freq	= [3107.0514547413791, 3175.0336745689656, 3379.9703663793102, 29
 signature_len	= len(signature_freq)
 min_freq		= 500.
 max_freq		= 10000.
+
 rate, data	= read(sys.argv[1]) 
 
 signalsize	= data.size
@@ -18,12 +19,19 @@ rfftData	= abs(numpy.fft.rfft(data))
 maxlist = []
 for i in range(10000) :
 	max_i = rfftData[1:].argmax() + 1
+
+	# if the freq is outside of the range
 	if frq[max_i] < min_freq or frq[max_i] > max_freq:
-		rfftData = numpy.delete(rfftData, max_i)
-		i -= 1
+		rfftData	= numpy.delete(rfftData, max_i) # delete rfft data
+		frq 		= numpy.delete(frq, max_i)		# delete frq
+		
+		i -= 1 	# go back
 		continue
+
+	#if freq is in range, then add to max list
 	maxlist.append(frq[max_i])
-	rfftData = numpy.delete(rfftData, max_i)
+	rfftData	= numpy.delete(rfftData, max_i)	# delete from the list
+	frq 		= numpy.delete(frq, max_i)
 
 spectrumtxt	= open("spectrum.txt", 'w')
 for fr in maxlist :
